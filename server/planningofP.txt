@@ -1,0 +1,56 @@
+voting application
+WHAT???
+A FUNCTIONALITY WHERE USER CAN GIVE VOTE TO THE GIVEN SET OF CANDIDATE
+
+MODELS?
+ROUTES?
+
+VOTING APP FUNCTIONALITY:
+
+1. USER SIGN IN/ SIGN UP
+2. SEE THE LIST OF CANDIDATE
+3. ONE VOTE ON AT A TIME
+4. THERE IS A ROUTE WHICH SHOWS THE LIST OF CANDIDATES AND THEIR VOTE COUNTS SORTED BY THEIR VOTE COUNT
+5. USER DATA MUST CONTAIN THEIR ONE UNIQUE GOVERNMENT ID PROOF NAME: AADHAR CARD NUMBER
+6. THERE SHOULD BE ON ADMIN WHO CAN ONLY MAINTAIN THE TABLE OF CANDIDATES AND HE CAN'T ABLE TO VOTE AT ALL
+7. USER CAN CHANGE THEIR PASSWORD
+8. USER CAN LOGIN ONLY WITH AADHAR CARD NUMBER AND PASSWORD
+9. ADMIN CAN'T VOTE
+
+ROUTES:
+
+USER AUTHENTICATION:
+      /signup: POST :- create user account
+      /login: POST :- log into existing account [ aadhar card number + password]
+
+VOTING:
+     /candidates: GET :- get the list of all candidates.
+     /vote/:candidateId: POST :- vote for a specific candidate.
+
+VOTE COUNTS:
+     /vote/counts: GET :- get the list of candidates sorted by their vote counts
+
+USER PROFILE:
+     /profile: GET :- get the user's profile information
+     /profile/password: PUT :- change the user's password
+
+ADMIN CANDIDATE MANAGEMENT:
+      /candidates: POST :- creates a new candidate
+      /candidates/:canidateId: PUT :- modification in existing candidate
+      /canidates/:candidateId: DELETE :- delete a candidate from the list
+
+sample data: /signup
+{
+    "name": "rahul mishra",
+    "age": 20,
+    "email": "rahulmishra20@gmail.com",
+    "mobile": "9867718956",
+    "address": "paradise , california, london",
+    "aadharCardNumber": 123456789101,
+    "password": "admin",
+    "role": "admin"
+}
+
+69f5af554a082b034c6efbf8
+
+db.users.find({ _id: ObjectId("69f5af554a082b034c6efbf8") })
