@@ -2,7 +2,8 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
 const derived = {
-  MONGODB_URI: process.env.MONGODB_LOCAL_DB || process.env.MONGO_URI,
+  MONGODB_URI:
+    process.env.MONGODB_URI || process.env.MONGODB_LOCAL_DB || process.env.MONGO_URI,
   SESSION_SECRET: process.env.SESSION_SECRET || (!isProduction ? process.env.JWT_SECRET : ''),
   COOKIE_SECRET:
     process.env.COOKIE_SECRET ||

@@ -71,7 +71,6 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function hashPassword(next) {
   if (!this.isModified('password') || !this.password) {
-    next()
     return
   }
 
