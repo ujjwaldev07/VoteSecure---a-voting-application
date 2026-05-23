@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const compression = require('compression')
 const dotenv = require('dotenv')
+const cors = require('cors');
 
 dotenv.config()
 
@@ -65,3 +66,10 @@ app.listen(env.PORT, () => {
   console.log(`Server listening on port ${env.PORT}`)
   console.log(`Environment: ${env.NODE_ENV}`)
 })
+
+app.use(
+  cors({
+    origin: "https://vote-secure-a-voting-application-oa.vercel.app/",
+    credentials: true,
+  })
+);
