@@ -5,6 +5,7 @@ VoteSecure - Voting application
 
 
 Secure Online Voting Platform:--
+
 VoteSecure is a modern, full-stack online voting application designed to provide a secure, transparent, and efficient digital voting experience. It incorporates industry-standard authentication, authorization, and security practices while delivering a responsive and user-friendly interface.
 The platform enables authenticated users to participate in elections securely, while administrators can manage elections, candidates, and results through a dedicated dashboard.
 
