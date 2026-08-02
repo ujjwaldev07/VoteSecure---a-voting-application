@@ -1,5 +1,7 @@
 VoteSecure - Voting application
+
 <img width="1896" height="924" alt="image" src="https://github.com/user-attachments/assets/ef2ef66d-4210-4b50-b9b4-934effad6eac" />
+
 
 
 Secure Online Voting Platform:--
