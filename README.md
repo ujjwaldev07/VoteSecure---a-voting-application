@@ -92,31 +92,13 @@ Backend:--
 
 Project Structure:
 
-VoteSecure/
-│
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── utils/
-│   └── server.js
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── store/
-│   │   └── assets/
-│
-├── docs/
-├── screenshots/
-└── README.md
+<img width="315" height="674" alt="image" src="https://github.com/user-attachments/assets/84d4d01a-a5d2-4774-8140-4f990795bb05" />
+
+
+
+
+
+
 
 
 Getting Started:
@@ -174,28 +156,8 @@ npm run dev
 
 Application Workflow:--
 
-User
-   │
-   ▼
-Login / Register
-   │
-   ▼
-Authentication
-   │
-   ▼
-Dashboard
-   │
-   ▼
-Browse Elections
-   │
-   ▼
-Cast Vote
-   │
-   ▼
-Vote Verification
-   │
-   ▼
-Election Results
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/6990de57-3a09-40ee-b5cb-2b2fef110dbb" />
+
 
 Security Features:
 - JWT Authentication
