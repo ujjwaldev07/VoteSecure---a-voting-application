@@ -51,6 +51,10 @@ app.get('/health', async (req, res) => {
   })
 })
 
+app.get('/', async(req, res) => {
+    console.log('Votesecure API is running successfully');
+})
+
 app.use('/auth', authRoutes)
 app.use('/admin', adminRoutes)
 app.use('/user', userRoutes)
