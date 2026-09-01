@@ -73,7 +73,11 @@ app.listen(env.PORT, () => {
 
 app.use(
   cors({
+<<<<<<< HEAD
     origin: "https://vote-secure-a-voting-application0.vercel.app",
+=======
+    origin: process.env.CLIENT_URL,
+>>>>>>> 156fe4b (update server.js file)
     credentials: true,
   })
 );
