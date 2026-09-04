@@ -5,6 +5,8 @@ declare module 'axios' {
     skipErrorToast?: boolean
     skipAuthRefresh?: boolean
     skipCsrf?: boolean
+    skipUnauthorizedRedirect?: boolean
     _retry?: number
+    _csrfRetry?: boolean
   }
 }

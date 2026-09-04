@@ -16,6 +16,7 @@ import { PageTransition } from '@/components/shared/page-transition'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ChartFrame } from '@/components/shared/chart-frame'
 import { useCandidates, useVoteCounts } from '@/hooks/use-candidates'
 import { getPartyColor, formatNumber } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ export default function ResultsPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Candidates</p>
             <p className="text-3xl font-bold">{candidates.length}</p>
@@ -110,12 +111,13 @@ export default function ResultsPage() {
           <CardHeader>
             <CardTitle>Vote share</CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px]">
+          <CardContent>
             {isLoading ? (
-              <Skeleton className="h-full w-full" />
+              <Skeleton className="h-[320px] w-full" />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+              <ChartFrame height={320}>
+                <ResponsiveContainer width="100%" height={320}>
+                  <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
@@ -132,22 +134,24 @@ export default function ResultsPage() {
                     ))}
                   </Pie>
                   <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartFrame>
             )}
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Votes by candidate</CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px]">
+          <CardContent>
             {isLoading ? (
-              <Skeleton className="h-full w-full" />
+              <Skeleton className="h-[320px] w-full" />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData} layout="vertical">
+              <ChartFrame height={320}>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={barData} layout="vertical">
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="name" width={80} className="text-xs" />
                   <Tooltip />
@@ -156,8 +160,9 @@ export default function ResultsPage() {
                       <Cell key={i} fill={entry.fill} />
                     ))}
                   </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartFrame>
             )}
           </CardContent>
         </Card>

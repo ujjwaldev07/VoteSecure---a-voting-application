@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -8,6 +7,11 @@ import { authApi } from '@/api/auth'
 import { getErrorMessage } from '@/api/client'
 import { useAuthStore } from '@/store/auth-store'
 import { GOOGLE_CLIENT_ID, ROUTES } from '@/lib/constants'
+import {
+  clearGoogleCredentialHandler,
+  getGoogleIdentity,
+  type GoogleCredentialResponse,
+} from '@/lib/google-identity'
 import { cn } from '@/lib/utils'
 
 interface GoogleAuthButtonProps {
@@ -20,10 +24,11 @@ export function GoogleAuthButton({ mode = 'login', className }: GoogleAuthButton
   const location = useLocation()
   const setSession = useAuthStore((s) => s.setSession)
   const [loading, setLoading] = useState(false)
+  const buttonRef = useRef<HTMLDivElement>(null)
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? ROUTES.DASHBOARD
 
-  const handleSuccess = async (credentialResponse: CredentialResponse) => {
+  const handleSuccess = useCallback(async (credentialResponse: GoogleCredentialResponse) => {
     if (!credentialResponse.credential) {
       toast.error('Google sign-in failed. Please try again.')
       return
@@ -42,7 +47,35 @@ export function GoogleAuthButton({ mode = 'login', className }: GoogleAuthButton
     } finally {
       setLoading(false)
     }
-  }
+  }, [from, mode, navigate, setSession])
+
+  useEffect(() => {
+    const container = buttonRef.current
+    if (!GOOGLE_CLIENT_ID || !container) return
+
+    let disposed = false
+    container.replaceChildren()
+
+    void getGoogleIdentity(GOOGLE_CLIENT_ID, handleSuccess)
+      .then((google) => {
+        if (!disposed) {
+          google.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            width: 360,
+            text: mode === 'signup' ? 'signup_with' : 'continue_with',
+            shape: 'rectangular',
+          })
+        }
+      })
+      .catch((error: Error) => toast.error(error.message))
+
+    return () => {
+      disposed = true
+      clearGoogleCredentialHandler(handleSuccess)
+      container.replaceChildren()
+    }
+  }, [handleSuccess, mode])
 
   if (!GOOGLE_CLIENT_ID) {
     return (
@@ -71,15 +104,7 @@ export function GoogleAuthButton({ mode = 'login', className }: GoogleAuthButton
           loading && 'pointer-events-none opacity-70'
         )}
       >
-        <GoogleLogin
-          onSuccess={handleSuccess}
-          onError={() => toast.error('Google sign-in was cancelled or failed')}
-          theme="outline"
-          size="large"
-          width="360"
-          text={mode === 'signup' ? 'signup_with' : 'continue_with'}
-          shape="rectangular"
-        />
+        <div ref={buttonRef} aria-label="Continue with Google" />
       </motion.div>
     </motion.div>
   )

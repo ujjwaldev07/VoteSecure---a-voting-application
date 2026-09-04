@@ -32,10 +32,13 @@ function delay(ms: number) {
 async function fetchCsrfToken() {
   if (csrfToken) return csrfToken
   if (!csrfPromise) {
-    csrfPromise = axios
-      .get<{ csrfToken: string }>(`${API_BASE_URL}/auth/csrf`, {
+    csrfPromise = apiClient
+      .get<{ csrfToken: string }>('/auth/csrf', {
         withCredentials: true,
         timeout: 10000,
+        skipCsrf: true,
+        skipAuthRefresh: true,
+        skipErrorToast: true,
       })
       .then((response) => {
         csrfToken = response.data.csrfToken
@@ -98,6 +101,13 @@ apiClient.interceptors.response.use(
 
     if (error.response?.status === 403 && extractErrorMessage(error) === 'Invalid CSRF token') {
       csrfToken = null
+      if (config && !config._csrfRetry) {
+        return apiClient.request({
+          ...config,
+          _csrfRetry: true,
+          headers: { ...config.headers },
+        })
+      }
     }
 
     if (error.response?.status === 401 && config && !config.skipAuthRefresh) {
@@ -114,7 +124,7 @@ apiClient.interceptors.response.use(
 
     const message = extractErrorMessage(error)
 
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !config?.skipUnauthorizedRedirect) {
       const path = window.location.pathname
       const isAuthPage =
         path.includes('/login') ||

@@ -8,7 +8,7 @@ export interface User {
   email?: string
   mobile?: string
   address?: string
-  aadharCardNumber?: string
+  aadharLast4?: string
   role: UserRole
   isVoted?: boolean
 }

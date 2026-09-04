@@ -75,6 +75,7 @@ export const authApi = {
     apiClient.get<{ success: boolean; user: User }>('/auth/me', {
       skipErrorToast: true,
       skipAuthRefresh: true,
+      skipUnauthorizedRedirect: true,
     }),
 
   getCsrfToken: () =>

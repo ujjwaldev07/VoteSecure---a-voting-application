@@ -13,6 +13,7 @@ import {
 } from 'recharts'
 import { PageTransition } from '@/components/shared/page-transition'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartFrame } from '@/components/shared/chart-frame'
 import { useCandidates, useVoteCounts } from '@/hooks/use-candidates'
 import { getPartyColor, formatNumber } from '@/lib/utils'
 
@@ -65,13 +66,14 @@ export default function AdminAnalyticsPage() {
       </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Votes by party</CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={partyData}>
+          <CardContent>
+            <ChartFrame height={320}>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={partyData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="party" className="text-xs" />
                 <YAxis className="text-xs" />
@@ -81,18 +83,20 @@ export default function AdminAnalyticsPage() {
                     <Cell key={i} fill={entry.fill} />
                   ))}
                 </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartFrame>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Candidate performance</CardTitle>
           </CardHeader>
-          <CardContent className="h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData}>
+          <CardContent>
+            <ChartFrame height={320}>
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart data={trendData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="name" className="text-xs" />
                 <YAxis className="text-xs" />
@@ -105,8 +109,9 @@ export default function AdminAnalyticsPage() {
                   dot={{ r: 4 }}
                   animationDuration={800}
                 />
-              </LineChart>
-            </ResponsiveContainer>
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartFrame>
           </CardContent>
         </Card>
       </div>

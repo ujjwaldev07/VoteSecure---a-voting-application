@@ -1,6 +1,22 @@
 import { useEffect } from 'react'
 import { authApi } from '@/api/auth'
 import { useAuthStore } from '@/store/auth-store'
+import type { User } from '@/types'
+
+let restoreSessionPromise: Promise<User> | null = null
+
+function restoreSession() {
+  if (!restoreSessionPromise) {
+    restoreSessionPromise = authApi
+      .getMe()
+      .then(({ data }) => data.user)
+      .finally(() => {
+        restoreSessionPromise = null
+      })
+  }
+
+  return restoreSessionPromise
+}
 
 export function AuthBootstrap() {
   const setSession = useAuthStore((s) => s.setSession)
@@ -12,9 +28,9 @@ export function AuthBootstrap() {
 
     const bootstrap = async () => {
       try {
-        const { data } = await authApi.getMe()
+        const user = await restoreSession()
         if (!cancelled) {
-          setSession(data.user, data.user.role === 'admin' ? 'admin' : 'user')
+          setSession(user, user.role === 'admin' ? 'admin' : 'user')
         }
       } catch {
         if (!cancelled) {

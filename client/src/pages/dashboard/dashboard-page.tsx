@@ -14,6 +14,7 @@ import { PageTransition } from '@/components/shared/page-transition'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ChartFrame } from '@/components/shared/chart-frame'
 import { useCandidates, useVoteCounts } from '@/hooks/use-candidates'
 import { useProfile } from '@/hooks/use-profile'
 import { useAuthStore } from '@/store/auth-store'
@@ -89,16 +90,17 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+        <Card className="min-w-0 lg:col-span-2">
           <CardHeader>
             <CardTitle>Vote distribution</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent>
             {isLoading ? (
-              <Skeleton className="h-full w-full" />
+              <Skeleton className="h-[300px] w-full" />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+              <ChartFrame height={300}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="voteGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="oklch(0.55 0.22 264)" stopOpacity={0.4} />
@@ -110,8 +112,9 @@ export default function DashboardPage() {
                   <YAxis className="text-xs" />
                   <Tooltip contentStyle={{ background: 'var(--color-popover)', border: '1px solid var(--color-border)', borderRadius: '8px' }} />
                   <Area type="monotone" dataKey="votes" stroke="oklch(0.55 0.22 264)" fill="url(#voteGrad)" />
-                </AreaChart>
-              </ResponsiveContainer>
+                  </AreaChart>
+                </ResponsiveContainer>
+              </ChartFrame>
             )}
           </CardContent>
         </Card>

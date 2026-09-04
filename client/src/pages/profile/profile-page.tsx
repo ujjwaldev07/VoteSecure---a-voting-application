@@ -29,7 +29,7 @@ const passwordSchema = z
 type PasswordForm = z.infer<typeof passwordSchema>
 
 export default function ProfilePage() {
-  const { data: user, isLoading } = useProfile()
+  const { data: user, isLoading, isError, error, refetch, isFetching } = useProfile()
 
   const {
     register,
@@ -58,6 +58,24 @@ export default function ProfilePage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
+    )
+  }
+
+  if (isError || !user) {
+    return (
+      <PageTransition>
+        <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 text-center">
+          <div>
+            <h1 className="text-xl font-semibold">Unable to load your profile</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isError ? getErrorMessage(error) : 'Your profile is not available right now.'}
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+            {isFetching ? <Loader2 className="animate-spin" /> : 'Try again'}
+          </Button>
+        </div>
+      </PageTransition>
     )
   }
 
@@ -93,7 +111,7 @@ export default function ProfilePage() {
             <dl className="grid gap-3 text-sm">
               <div className="flex justify-between border-b border-border/50 pb-2">
                 <dt className="text-muted-foreground">Mobile</dt>
-                <dd className="font-medium">{user?.mobile}</dd>
+                <dd className="font-medium">{user?.mobile || '—'}</dd>
               </div>
               <div className="flex justify-between border-b border-border/50 pb-2">
                 <dt className="text-muted-foreground">Email</dt>
@@ -101,11 +119,13 @@ export default function ProfilePage() {
               </div>
               <div className="flex justify-between border-b border-border/50 pb-2">
                 <dt className="text-muted-foreground">Aadhar</dt>
-                <dd className="font-mono font-medium">****{user?.aadharCardNumber?.slice(-4)}</dd>
+                <dd className="font-mono font-medium">
+                  {user?.aadharLast4 ? `****${user.aadharLast4}` : '—'}
+                </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Address</dt>
-                <dd className="max-w-[200px] text-right font-medium">{user?.address}</dd>
+                <dd className="max-w-[200px] text-right font-medium">{user?.address || '—'}</dd>
               </div>
             </dl>
           </CardContent>

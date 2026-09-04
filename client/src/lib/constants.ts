@@ -1,4 +1,8 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim()
+
+// Development uses Vite's same-origin proxy; production must set VITE_API_URL
+// to the HTTPS API origin (or intentionally use a same-origin reverse proxy).
+export const API_BASE_URL = (configuredApiUrl || (import.meta.env.DEV ? '/api' : '')).replace(/\/$/, '')
 export const THEME_KEY = 'votesecure_theme'
 
 export const ROUTES = {
