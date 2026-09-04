@@ -1,7 +1,8 @@
 const cors = require('cors')
 const { env } = require('../config/env')
 
-const allowedOrigins = env.CLIENT_URL.split(',').map((value) => value.trim())
+const AppError = require('../utils/AppError')
+const allowedOrigins = env.CLIENT_ORIGINS
 
 module.exports = cors({
   origin(origin, callback) {
@@ -10,9 +11,10 @@ module.exports = cors({
       return
     }
 
-    callback(new Error('Not allowed by CORS'))
+    callback(new AppError('Origin is not allowed', 403))
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'X-CSRF-Token'],
+  allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
+  optionsSuccessStatus: 204,
 })

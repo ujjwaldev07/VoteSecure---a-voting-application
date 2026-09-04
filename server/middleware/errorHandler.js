@@ -19,6 +19,14 @@ function normalizeError(error) {
     return new AppError('Invalid request data', 400)
   }
 
+  if (['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(error?.name)) {
+    return new AppError('Invalid or expired authentication token', 401)
+  }
+
+  if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
+    return new AppError('Malformed JSON request body', 400)
+  }
+
   if (error?.code === 'EBADCSRFTOKEN') {
     return new AppError('Invalid CSRF token', 403)
   }

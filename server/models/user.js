@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
+      required() {
+        return this.authProvider !== 'google'
+      },
       min: 18,
     },
     email: {
@@ -19,7 +21,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       sparse: true,
-      index: true,
+      unique: true,
     },
     googleId: {
       type: String,
@@ -28,25 +30,31 @@ const userSchema = new mongoose.Schema(
     },
     authProvider: {
       type: String,
-      enum: ['local', 'google'],
+      enum: ['local', 'google', 'both'],
       default: 'local',
     },
     mobile: {
       type: String,
-      required: true,
+      required() {
+        return this.authProvider !== 'google'
+      },
       unique: true,
-      index: true,
+      sparse: true,
     },
     address: {
       type: String,
-      required: true,
+      required() {
+        return this.authProvider !== 'google'
+      },
       trim: true,
     },
     aadharCardNumber: {
       type: String,
-      required: true,
+      required() {
+        return this.authProvider !== 'google'
+      },
       unique: true,
-      index: true,
+      sparse: true,
     },
     password: {
       type: String,
@@ -69,14 +77,13 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-userSchema.pre('save', async function hashPassword(next) {
+userSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password') || !this.password) {
     return
   }
 
   const salt = await bcrypt.genSalt(env.BCRYPT_ROUNDS)
   this.password = await bcrypt.hash(this.password, salt)
-  next()
 })
 
 userSchema.methods.comparePassword = function comparePassword(candidatePassword) {

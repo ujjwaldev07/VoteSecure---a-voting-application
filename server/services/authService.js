@@ -30,6 +30,20 @@ function assignSession(req, user) {
   req.session.isAuthenticated = true
 }
 
+async function establishSession(req, user) {
+  await new Promise((resolve, reject) => {
+    req.session.regenerate((error) => {
+      if (error) {
+        reject(new AppError('Unable to create authentication session', 500))
+        return
+      }
+      resolve()
+    })
+  })
+
+  assignSession(req, user)
+}
+
 async function persistRefreshSession(sessionId, sessionUser, tokenId) {
   const key = cacheKeys.refreshSession(sessionId)
   await redisClient.set(
@@ -154,21 +168,16 @@ async function loginWithGoogle({ credential }) {
   let user = await User.findOne({ $or: [{ googleId }, { email }] })
 
   if (!user) {
-    const digits = googleId.replace(/\D/g, '')
     user = await User.create({
       name,
       email,
       googleId,
       authProvider: 'google',
-      age: 18,
-      mobile: `9${digits.slice(-9).padStart(9, '0')}`,
-      address: 'Google OAuth Sign-in',
-      aadharCardNumber: `99${digits.slice(-10).padStart(10, '0')}`,
       role: 'voter',
     })
   } else if (!user.googleId) {
     user.googleId = googleId
-    user.authProvider = 'google'
+    user.authProvider = user.password ? 'both' : 'google'
     await user.save()
   }
 
@@ -197,7 +206,12 @@ async function refreshAuthentication(req, res) {
     throw new AppError('Refresh session not found', 401)
   }
 
-  const payload = verifyRefreshToken(refreshToken)
+  let payload
+  try {
+    payload = verifyRefreshToken(refreshToken)
+  } catch {
+    throw new AppError('Invalid or expired refresh token', 401)
+  }
   if (payload.type !== 'refresh' || payload.sessionId !== req.sessionID) {
     throw new AppError('Invalid refresh token', 401)
   }
@@ -237,6 +251,7 @@ async function logout(req, res) {
 
 module.exports = {
   assignSession,
+  establishSession,
   getSessionUser,
   issueAuthArtifacts,
   signupVoter,

@@ -8,8 +8,8 @@ const cookieNames = {
 function buildCookieOptions(maxAge) {
   return {
     httpOnly: true,
-    secure: env.IS_PRODUCTION,
-    sameSite: 'strict',
+    secure: env.COOKIE_SECURE,
+    sameSite: env.COOKIE_SAME_SITE,
     signed: true,
     maxAge,
     path: '/',

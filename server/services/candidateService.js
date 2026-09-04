@@ -42,7 +42,7 @@ async function createCandidate(payload) {
 
 async function updateCandidate(candidateId, payload) {
   const candidate = await Candidate.findByIdAndUpdate(candidateId, payload, {
-    new: true,
+    returnDocument: 'after',
     runValidators: true,
   })
 

@@ -1,6 +1,28 @@
 const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
+function parseOrigins(value) {
+  return String(value || 'http://localhost:5174')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+    .map((origin) => {
+      try {
+        return new URL(origin).origin
+      } catch {
+        throw new Error(`Invalid client origin: ${origin}`)
+      }
+    })
+}
+
+function parseSameSite(value) {
+  const sameSite = String(value || 'strict').toLowerCase()
+  if (!['strict', 'lax', 'none'].includes(sameSite)) {
+    throw new Error('COOKIE_SAME_SITE must be one of: strict, lax, none')
+  }
+  return sameSite
+}
+
 const derived = {
   MONGODB_URI:
     process.env.MONGODB_URI || process.env.MONGODB_LOCAL_DB || process.env.MONGO_URI,
@@ -30,10 +52,19 @@ for (const [key, value] of Object.entries(required)) {
   }
 }
 
+const clientOrigins = parseOrigins(process.env.CLIENT_URLS || process.env.CLIENT_URL)
+const cookieSameSite = parseSameSite(process.env.COOKIE_SAME_SITE)
+const cookieSecure = isProduction || process.env.COOKIE_SECURE === 'true'
+
+if (cookieSameSite === 'none' && !cookieSecure) {
+  throw new Error('COOKIE_SAME_SITE=none requires COOKIE_SECURE=true or NODE_ENV=production')
+}
+
 const env = {
   NODE_ENV: nodeEnv,
   PORT: Number(process.env.PORT || 3000),
-  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  CLIENT_URL: clientOrigins[0],
+  CLIENT_ORIGINS: clientOrigins,
   MONGODB_URI: derived.MONGODB_URI.trim().replace(/;+$/, ''),
   SESSION_SECRET: derived.SESSION_SECRET,
   COOKIE_SECRET: derived.COOKIE_SECRET,
@@ -50,11 +81,15 @@ const env = {
     process.env.REDIS_REQUIRED === 'true' ||
     (isProduction && process.env.REDIS_REQUIRED !== 'false'),
   REDIS_HOST: process.env.REDIS_HOST || '127.0.0.1',
+  REDIS_URL: process.env.REDIS_URL || '',
   REDIS_PORT: Number(process.env.REDIS_PORT || 6379),
   REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
   REDIS_DB: Number(process.env.REDIS_DB || 0),
   REDIS_TLS: process.env.REDIS_TLS === 'true',
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
+  COOKIE_SAME_SITE: cookieSameSite,
+  COOKIE_SECURE: cookieSecure,
+  TRUST_PROXY: isProduction ? Number(process.env.TRUST_PROXY || 1) : false,
   BCRYPT_ROUNDS: Number(process.env.BCRYPT_ROUNDS || 12),
   CANDIDATE_PAGE_SIZE: Number(process.env.CANDIDATE_PAGE_SIZE || 10),
 }

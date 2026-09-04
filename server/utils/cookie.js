@@ -9,8 +9,8 @@ function setAuthCookies(res, accessToken, refreshToken) {
 function clearAuthCookies(res) {
   const common = {
     httpOnly: true,
-    secure: env.IS_PRODUCTION,
-    sameSite: 'strict',
+    secure: env.COOKIE_SECURE,
+    sameSite: env.COOKIE_SAME_SITE,
     signed: true,
     path: '/',
   }
@@ -19,8 +19,8 @@ function clearAuthCookies(res) {
   res.clearCookie(cookieNames.refreshToken, common)
   res.clearCookie('voting_app_sid', {
     httpOnly: true,
-    secure: env.IS_PRODUCTION,
-    sameSite: 'strict',
+    secure: env.COOKIE_SECURE,
+    sameSite: env.COOKIE_SAME_SITE,
     path: '/',
   })
   res.clearCookie('_csrf', common)

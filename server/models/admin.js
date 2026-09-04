@@ -30,15 +30,13 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-adminSchema.pre('save', async function hashPassword(next) {
+adminSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password')) {
-    next()
     return
   }
 
   const salt = await bcrypt.genSalt(env.BCRYPT_ROUNDS)
   this.password = await bcrypt.hash(this.password, salt)
-  next()
 })
 
 adminSchema.methods.comparePassword = function comparePassword(candidatePassword) {

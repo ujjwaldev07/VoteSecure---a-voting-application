@@ -3,7 +3,6 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const compression = require('compression')
 const dotenv = require('dotenv')
-const cors = require('cors');
 
 dotenv.config()
 
@@ -27,9 +26,7 @@ const resultRoutes = require('./routes/resultRoutes')
 
 const app = express()
 
-app.set('trust proxy', 1)
-
-connectDatabase()
+app.set('trust proxy', env.TRUST_PROXY)
 
 app.use(helmetConfig)
 app.use(compression())
@@ -51,8 +48,8 @@ app.get('/health', async (req, res) => {
   })
 })
 
-app.get('/', async(req, res) => {
-    console.log('Votesecure API is running successfully');
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'VoteSecure API is running' })
 })
 
 app.use('/auth', authRoutes)
@@ -66,14 +63,15 @@ app.get('/csrf-token', csrfTokenHandler)
 app.use(notFound)
 app.use(errorHandler)
 
-app.listen(env.PORT, () => {
-  console.log(`Server listening on port ${env.PORT}`)
-  console.log(`Environment: ${env.NODE_ENV}`)
-})
-
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
+async function startServer() {
+  await connectDatabase()
+  app.listen(env.PORT, () => {
+    console.log(`Server listening on port ${env.PORT}`)
+    console.log(`Environment: ${env.NODE_ENV}`)
   })
-);
+}
+
+startServer().catch((error) => {
+  console.error('Unable to start VoteSecure API:', error.message)
+  process.exit(1)
+})

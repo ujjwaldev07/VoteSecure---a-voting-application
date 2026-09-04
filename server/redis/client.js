@@ -105,11 +105,9 @@ if (!env.REDIS_ENABLED) {
     },
   }
 
-  if (env.REDIS_TLS) {
-    redisOptions.tls = {}
-  }
+  if (env.REDIS_TLS) redisOptions.tls = {}
 
-  redisClient = new Redis(redisOptions)
+  redisClient = env.REDIS_URL ? new Redis(env.REDIS_URL, redisOptions) : new Redis(redisOptions)
 
   redisClient.on('connect', () => console.log('Redis connected'))
   redisClient.on('ready', () => console.log('Redis ready'))

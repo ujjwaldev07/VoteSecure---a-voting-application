@@ -1,32 +1,50 @@
 const Candidate = require('../models/candidate')
 const User = require('../models/user')
+const mongoose = require('mongoose')
 const { cacheKeys } = require('../redis/cacheKeys')
 const { CACHE_TTL, getCache, setCache, delByPattern } = require('../cache/cacheService')
 const AppError = require('../utils/AppError')
 
 async function castVote(candidateId, userId) {
-  const [candidate, user] = await Promise.all([
-    Candidate.findById(candidateId),
-    User.findById(userId),
-  ])
-
-  if (!candidate) {
-    throw new AppError('Candidate not found', 404)
+  if (!mongoose.isValidObjectId(candidateId)) {
+    throw new AppError('Invalid candidate ID', 400)
   }
 
-  if (!user) {
-    throw new AppError('User not found', 404)
+  const session = await mongoose.startSession()
+
+  try {
+    await session.withTransaction(async () => {
+      const user = await User.findOneAndUpdate(
+        { _id: userId, role: 'voter', isVoted: false },
+        { $set: { isVoted: true } },
+        { returnDocument: 'after', session }
+      )
+
+      if (!user) {
+        const existingUser = await User.exists({ _id: userId, role: 'voter' }).session(session)
+        if (!existingUser) {
+          throw new AppError('User not found', 404)
+        }
+        throw new AppError('You have already voted', 409)
+      }
+
+      const candidate = await Candidate.findByIdAndUpdate(
+        candidateId,
+        {
+          $inc: { voteCount: 1 },
+          $push: { votes: { user: userId } },
+        },
+        { returnDocument: 'after', session }
+      )
+
+      if (!candidate) {
+        throw new AppError('Candidate not found', 404)
+      }
+    })
+  } finally {
+    await session.endSession()
   }
 
-  if (user.isVoted) {
-    throw new AppError('You have already voted', 409)
-  }
-
-  candidate.votes.push({ user: userId })
-  candidate.voteCount += 1
-  user.isVoted = true
-
-  await Promise.all([candidate.save(), user.save()])
   await delByPattern('results:*')
   await delByPattern('analytics:*')
   await delByPattern('candidates:*')

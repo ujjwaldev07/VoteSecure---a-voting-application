@@ -3,7 +3,7 @@ const authService = require('../services/authService')
 
 const signup = asyncHandler(async (req, res) => {
   const user = await authService.signupVoter(req.body)
-  authService.assignSession(req, user)
+  await authService.establishSession(req, user)
   await authService.issueAuthArtifacts(req, res)
 
   res.status(201).json({
@@ -15,7 +15,7 @@ const signup = asyncHandler(async (req, res) => {
 
 const signupAdmin = asyncHandler(async (req, res) => {
   const admin = await authService.signupAdmin(req.body)
-  authService.assignSession(req, admin)
+  await authService.establishSession(req, admin)
   await authService.issueAuthArtifacts(req, res)
 
   res.status(201).json({
@@ -28,7 +28,7 @@ const signupAdmin = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const user = await authService.loginVoter(req.body)
-  authService.assignSession(req, user)
+  await authService.establishSession(req, user)
   await authService.issueAuthArtifacts(req, res)
 
   res.json({
@@ -40,7 +40,7 @@ const login = asyncHandler(async (req, res) => {
 
 const loginAdmin = asyncHandler(async (req, res) => {
   const admin = await authService.loginAdmin(req.body)
-  authService.assignSession(req, admin)
+  await authService.establishSession(req, admin)
   await authService.issueAuthArtifacts(req, res)
 
   res.json({
@@ -53,7 +53,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
 const loginGoogle = asyncHandler(async (req, res) => {
   const user = await authService.loginWithGoogle(req.body)
-  authService.assignSession(req, user)
+  await authService.establishSession(req, user)
   await authService.issueAuthArtifacts(req, res)
 
   res.json({

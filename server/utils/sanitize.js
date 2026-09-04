@@ -15,7 +15,7 @@ function publicUserShape(user) {
     age: safeUser.age,
     mobile: safeUser.mobile,
     address: safeUser.address,
-    aadharCardNumber: safeUser.aadharCardNumber,
+    aadharLast4: safeUser.aadharCardNumber ? String(safeUser.aadharCardNumber).slice(-4) : undefined,
     isVoted: safeUser.isVoted,
   }
 }

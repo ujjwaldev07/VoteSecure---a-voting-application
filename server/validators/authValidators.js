@@ -13,9 +13,19 @@ function requireFields(fields) {
 }
 
 function validateVoterSignup(req, res, next) {
-  const { age, password, mobile, aadharCardNumber } = req.body
+  const { name, age, password, mobile, address, aadharCardNumber, email } = req.body
 
-  if (Number(age) < 18) {
+  if (!name || String(name).trim().length < 2) {
+    next(new AppError('Name must be at least 2 characters', 400))
+    return
+  }
+
+  if (!address || String(address).trim().length < 5) {
+    next(new AppError('Address must be at least 5 characters', 400))
+    return
+  }
+
+  if (!Number.isInteger(Number(age)) || Number(age) < 18 || Number(age) > 120) {
     next(new AppError('Voter must be at least 18 years old', 400))
     return
   }
@@ -30,8 +40,17 @@ function validateVoterSignup(req, res, next) {
     return
   }
 
-  if (String(password || '').length < 8) {
-    next(new AppError('Password must be at least 8 characters', 400))
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '')) && email !== undefined) {
+    next(new AppError('Invalid email format', 400))
+    return
+  }
+
+  if (
+    String(password || '').length < 8 ||
+    !/[A-Z]/.test(String(password)) ||
+    !/[0-9]/.test(String(password))
+  ) {
+    next(new AppError('Password must be at least 8 characters and include an uppercase letter and number', 400))
     return
   }
 

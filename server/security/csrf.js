@@ -5,8 +5,8 @@ const csrfProtection = csurf({
   cookie: {
     key: '_csrf',
     httpOnly: true,
-    sameSite: 'strict',
-    secure: env.IS_PRODUCTION,
+    sameSite: env.COOKIE_SAME_SITE,
+    secure: env.COOKIE_SECURE,
     signed: true,
   },
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
