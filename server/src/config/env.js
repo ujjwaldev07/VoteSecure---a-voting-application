@@ -2,7 +2,7 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
 function parseOrigins(value) {
-  return String(value || 'http://localhost:5174')
+  return String(value || 'http://localhost:5173')
     .split(',')
     .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean)

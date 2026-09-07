@@ -2,7 +2,7 @@ const express = require('express')
 const controller = require('../controllers/authController')
 const { isAuthenticated } = require('../middleware/authMiddleware')
 const { authLimiter, bruteForceLimiter } = require('../middleware/rateLimiter')
-const { requireFields, validateVoterSignup } = require('../validators/authValidators')
+const { requireFields, validateVoterSignup } = require('../src/validators/authValidators')
 const validateAdminSignup = require('../middleware/validateAdminSignup')
 
 const router = express.Router()

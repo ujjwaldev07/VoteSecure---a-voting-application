@@ -1,7 +1,7 @@
 const cors = require('cors')
 const { env } = require('../config/env')
 
-const AppError = require('../utils/AppError')
+const AppError = require('../src/utils/AppError')
 const allowedOrigins = env.CLIENT_ORIGINS
 
 module.exports = cors({

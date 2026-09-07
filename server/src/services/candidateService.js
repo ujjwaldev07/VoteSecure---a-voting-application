@@ -1,7 +1,7 @@
 const Candidate = require('../models/candidate')
 const { cacheKeys } = require('../redis/cacheKeys')
 const { CACHE_TTL, getCache, setCache, delByPattern } = require('../cache/cacheService')
-const AppError = require('../utils/AppError')
+const AppError = require('../src/utils/AppError')
 
 async function listCandidates(page = 1, limit = 10) {
   const cacheKey = cacheKeys.candidates(page, limit)

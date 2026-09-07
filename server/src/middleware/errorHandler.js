@@ -1,4 +1,4 @@
-const AppError = require('../utils/AppError')
+const AppError = require('../src/utils/AppError')
 
 function normalizeError(error) {
   if (error instanceof AppError) {

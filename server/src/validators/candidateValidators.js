@@ -1,4 +1,4 @@
-const AppError = require('../utils/AppError')
+const AppError = require('../src/utils/AppError')
 
 function validateCandidate(req, res, next) {
   const { name, party, age } = req.body
