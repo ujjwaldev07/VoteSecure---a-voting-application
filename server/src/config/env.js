@@ -2,7 +2,7 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
 function parseOrigins(value) {
-  return String(value || 'https://vote-secure-a-voting-application-ivory.vercel.app')
+  return String(value || 'https://vote-secure-a-voting-application-g6j21j436-my-5d2b.vercel.app')
     .split(',')
     .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean)
