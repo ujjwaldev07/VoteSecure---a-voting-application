@@ -3,8 +3,8 @@ const User = require('../models/user')
 const { isAuthenticated } = require('../middleware/authMiddleware')
 const { apiLimiter } = require('../middleware/rateLimiter')
 const asyncHandler = require('../middleware/asyncHandler')
-const AppError = require('../src/utils/AppError')
-const { publicUserShape } = require('../src/utils/sanitize')
+const AppError = require('../utils/AppError')
+const { publicUserShape } = require('../utils/sanitize')
 
 const router = express.Router()
 

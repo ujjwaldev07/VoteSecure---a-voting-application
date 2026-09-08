@@ -117,7 +117,7 @@ apiClient.interceptors.response.use(
           ...config,
           skipAuthRefresh: true,
         })
-      } catch (refreshError) {
+      } catch {
         useAuthStore.getState().clearAuth()
       }
     }

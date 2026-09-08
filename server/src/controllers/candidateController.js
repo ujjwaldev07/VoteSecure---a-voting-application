@@ -1,5 +1,5 @@
-const asyncHandler = require('../src/middleware/asyncHandler')
-const candidateService = require('../src/services/candidateService')
+const asyncHandler = require('../middleware/asyncHandler')
+const candidateService = require('../services/candidateService')
 const { env } = require('../config/env')
 
 const listCandidates = asyncHandler(async (req, res) => {
