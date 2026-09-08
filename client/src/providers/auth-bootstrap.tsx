@@ -3,13 +3,13 @@ import { authApi } from '@/api/auth'
 import { useAuthStore } from '@/store/auth-store'
 import type { User } from '@/types'
 
-let restoreSessionPromise: Promise<User> | null = null
+let restoreSessionPromise: Promise<User | null> | null = null
 
-function restoreSession() {
+function restoreSession(): Promise<User | null> {
   if (!restoreSessionPromise) {
     restoreSessionPromise = authApi
       .getMe()
-      .then(({ data }) => data.user)
+      .then(({ data }) => data.user ?? null)
       .finally(() => {
         restoreSessionPromise = null
       })
@@ -30,7 +30,11 @@ export function AuthBootstrap() {
       try {
         const user = await restoreSession()
         if (!cancelled) {
-          setSession(user, user.role === 'admin' ? 'admin' : 'user')
+          if (user) {
+            setSession(user, user.role === 'admin' ? 'admin' : 'user')
+          } else {
+            clearAuth()
+          }
         }
       } catch {
         if (!cancelled) {

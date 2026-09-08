@@ -1,3 +1,4 @@
+import * as React from "react"
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
@@ -25,4 +26,6 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />
 }
 
+// badgeVariants is intentionally exported for reuse by consumers of the Badge component.
+// eslint-disable-next-line react-refresh/only-export-components
 export { Badge, badgeVariants }

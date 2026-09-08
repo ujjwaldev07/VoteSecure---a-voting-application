@@ -2,7 +2,7 @@ const asyncHandler = require('../middleware/asyncHandler')
 const voteService = require('../services/voteService')
 
 const castVote = asyncHandler(async (req, res) => {
-  const candidateId = req.body.candidateId || req.params.candidateId
+  const candidateId = req.params.candidateId || req.params.candidateId
   await voteService.castVote(candidateId, req.session.userId)
 
   res.json({

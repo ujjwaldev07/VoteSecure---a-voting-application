@@ -72,11 +72,14 @@ export const authApi = {
   },
 
   getMe: () =>
-    apiClient.get<{ success: boolean; user: User }>('/auth/me', {
-      skipErrorToast: true,
-      skipAuthRefresh: true,
-      skipUnauthorizedRedirect: true,
-    }),
+  apiClient.get<{
+    success: boolean
+    user: User | null
+    authenticated: boolean}>('/auth/me', {
+    skipErrorToast: true,
+    skipAuthRefresh: true,
+    skipUnauthorizedRedirect: true,
+  }),
 
   getCsrfToken: () =>
     apiClient.get<{ success: boolean; csrfToken: string }>('/auth/csrf', {
@@ -86,8 +89,8 @@ export const authApi = {
     }),
 
   getProfile: () =>
-    apiClient.get<{ success: boolean; user: User }>('/user/profile'),
+    apiClient.get<{ success: boolean; user: User }>('/auth/user/profile'),
 
   updatePassword: (data: PasswordUpdatePayload) =>
-    apiClient.put<{ success: boolean; message: string }>('/user/profile/password', data),
+    apiClient.put<{ success: boolean; message: string }>('/auth/user/profile/password', data),
 }

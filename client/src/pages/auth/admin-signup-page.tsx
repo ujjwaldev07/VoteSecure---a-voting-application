@@ -58,8 +58,13 @@ export default function AdminSignupPage() {
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {
-      const { confirmPassword: _, ...payload } = data
-      const res = await adminApi.signup(payload)
+       const payload = {
+             name: data.name,
+             email: data.email,
+             password: data.password,
+}
+
+   const res = await adminApi.signup(payload)
 
       if (res.data.user) {
         setSession(res.data.user, 'admin')

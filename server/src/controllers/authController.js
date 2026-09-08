@@ -82,10 +82,22 @@ const logout = asyncHandler(async (req, res) => {
 })
 
 const me = asyncHandler(async (req, res) => {
-  const user = await authService.loadCurrentUser(authService.getSessionUser(req))
-  res.json({
+  const sessionUser = authService.getSessionUser(req)
+
+  if (!sessionUser) {
+    return res.json({
+      success: true,
+      user: null,
+      authenticated: false,
+    })
+  }
+
+  const user = await authService.loadCurrentUser(sessionUser)
+
+  return res.json({
     success: true,
     user: authService.publicUserShape(user),
+    authenticated: true,
   })
 })
 

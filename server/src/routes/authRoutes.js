@@ -8,7 +8,7 @@ const validateAdminSignup = require('../middleware/validateAdminSignup')
 const router = express.Router()
 
 router.get('/csrf', controller.csrfToken)
-router.get('/me', isAuthenticated, controller.me)
+router.get('/me',  controller.me)
 router.post('/refresh', controller.refresh)
 router.post('/logout', isAuthenticated, controller.logout)
 

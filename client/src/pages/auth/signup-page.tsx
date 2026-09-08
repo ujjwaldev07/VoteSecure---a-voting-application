@@ -75,11 +75,17 @@ export default function SignupPage() {
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {
-      const { confirmPassword: _, ...payload } = data
-      const res = await authApi.signup({
-        ...payload,
-        email: payload.email || undefined,
-      })
+       const payload = {
+               name: data.name,
+               age: data.age,
+               email: data.email || undefined,
+               mobile: data.mobile,
+               address: data.address,
+               aadharCardNumber: data.aadharCardNumber,
+               password: data.password,
+}
+
+    const res = await authApi.signup(payload)
 
       if (res.data.user) {
         setSession(res.data.user, 'user')

@@ -37,11 +37,19 @@ async function establishSession(req, user) {
         reject(new AppError('Unable to create authentication session', 500))
         return
       }
-      resolve()
+
+      assignSession(req, user)
+
+      req.session.save((saveError) => {
+        if (saveError) {
+          reject(new AppError('Unable to save authentication session', 500))
+          return
+        }
+
+        resolve()
+      })
     })
   })
-
-  assignSession(req, user)
 }
 
 async function persistRefreshSession(sessionId, sessionUser, tokenId) {
@@ -74,21 +82,44 @@ async function issueAuthArtifacts(req, res) {
 }
 
 async function signupVoter(payload) {
-  const existingUser = await User.findOne({
-    $or: [
-      { email: payload.email?.toLowerCase() || null },
-      { mobile: payload.mobile },
-      { aadharCardNumber: payload.aadharCardNumber },
-    ],
-  })
+  const email = payload.email?.trim().toLowerCase()
+  const mobile = payload.mobile?.trim()
+  const aadharCardNumber = payload.aadharCardNumber?.trim()
 
-  if (existingUser) {
-    throw new AppError('User with this email, mobile, or Aadhaar already exists', 409)
+  const conditions = [
+      { mobile },
+      { aadharCardNumber },
+    ]
+
+  if (email) {
+     conditions.push({ email })
   }
+
+   const existingUser = await User.findOne({
+      $or: conditions,
+   })
+
+    if (existingUser) {
+    if (email && existingUser.email === email) {
+      throw new AppError('A user with this email already exists', 409)
+    }
+
+    if (existingUser.mobile === mobile) {
+      throw new AppError('A user with this mobile number already exists', 409)
+    }
+
+    if (existingUser.aadharCardNumber === aadharCardNumber) {
+      throw new AppError('A user with this Aadhaar number already exists', 409)
+    }
+
+    throw new AppError('User already exists', 409)
+  }
+
 
   const user = await User.create({
     ...payload,
-    email: payload.email?.toLowerCase() || undefined,
+    email: email || undefined,
+    mobile, aadharCardNumber,
     role: 'voter',
     authProvider: 'local',
   })
